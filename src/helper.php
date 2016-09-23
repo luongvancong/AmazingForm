@@ -1,6 +1,6 @@
 <?php
 
-if ( function_exists('mergeAttributes') ) {
+if (! function_exists('mergeAttributes') ) {
     /**
     * Merge Attributes
     *
@@ -36,7 +36,7 @@ if ( function_exists('mergeAttributes') ) {
     }
 }
 
-if ( function_exists('makeAttributes') ) {
+if (! function_exists('makeAttributes') ) {
     /**
      * Generate string attributes
      * @param  array $attributes

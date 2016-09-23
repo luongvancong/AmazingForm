@@ -7,75 +7,64 @@ function alertError($key) {
 class FormTest extends PHPUnit_Framework_TestCase
 {
     public function setUp() {
-        $config = require realpath('../Form/src/config.php');
-        $this->form = new \Justin\Form\Form($config);
+        $this->form = new \Justin\Form\AmazingForm();
     }
 
-    public function test_makeAttrs() {
-        $attrs = ['class' => 'account name', 'id' => 'account_name', 'name' => 'name', 'value' => 'shit'];
-        $actual = 'class="account name" id="account_name" name="name" value="shit"';
-        $expect = $this->form->makeAttrs($attrs);
-        $this->assertEquals($expect, $actual);
-    }
 
     public function test_text() {
-        $actual = '<input class="form-control my-class" id="my-class" type="text" name="age" value="18">';
-        $expect = $this->form->text('age', 18, ['class' => 'my-class', 'id' => 'my-class']);
+        $expect = '<input class="form-control my-class" id="my-class" name="age" type="text" value="18" />';
+        $actual = $this->form->text('age', 18, ['class' => 'my-class', 'id' => 'my-class']);
         $this->assertEquals($expect, $actual);
     }
 
+    public function test_hidden()
+    {
+        $expect = '<input class="form-control my-class" id="my-class" name="age" type="hidden" value="18" />';
+        $actual = $this->form->hidden('age', 18, ['class' => 'my-class', 'id' => 'my-class']);
+        $this->assertEquals($expect, $actual);
+    }
 
     public function test_radio() {
-        $actual = '<input class="my-class" id="my-class" type="radio" name="sex" value="1">';
-        $expect = $this->form->radio('sex', 1, 0, ['class' => 'my-class', 'id' => 'my-class']);
-        $this->assertEquals($expect, $actual);
-    }
+        $expect = '<input class="gender" id="gender" name="gender" type="radio" value="1" />';
+        $actual = $this->form->radio('gender', 1, 0, ['id' => 'gender', 'class' => 'gender']);
 
-    public function test_radio_checked() {
-        $actual = '<input class="my-class" id="my-class" type="radio" name="sex" value="1" checked="checked">';
-        $expect = $this->form->radio('sex', 1, 1, ['class' => 'my-class', 'id' => 'my-class']);
-        $this->assertEquals($expect, $actual);
-    }
-
-    public function test_checkbox() {
-        $actual = '<input class="my-class" id="my-class" type="checkbox" name="sex" value="1">';
-        $expect = $this->form->checkbox('sex', 1, 0, ['class' => 'my-class', 'id' => 'my-class']);
-        $this->assertEquals($expect, $actual);
-    }
-
-    public function test_checkbox_checked() {
-        $actual = '<input class="my-class" id="my-class" type="checkbox" name="sex" value="1" checked="checked">';
-        $expect = $this->form->checkbox('sex', 1, 1, ['class' => 'my-class', 'id' => 'my-class']);
-        $this->assertEquals($expect, $actual);
-    }
-
-    public function test_select() {
-        $actual = '
-            <select id="money" class="form-control" name="money">
-                <option value="1000">1000</option>
-            </select>
-        ';
-
-        $expect = $this->form->select('money', null, ['1000' => 1000], ['id' => 'money', 'class' => 'form-control']);
-
-        $actual = str_replace("\n\r", '', $actual);
-        $expect = str_replace("\n\r", '', $expect);
-
-        $this->assertEquals($expect, $actual);
-    }
-
-    public function test_select_selected() {
-        $actual = '
-            <select id="money" class="form-control" name="money">
-                <option value="1000" selected="selected">1000</option>
-            </select>
-        ';
-
-        $expect = $this->form->select('money', 1000, ['1000' => 1000], ['id' => 'money', 'class' => 'form-control']);
-
-        $actual = $this->replaceDirty($actual);
         $expect = $this->replaceDirty($expect);
+        $actual = $this->replaceDirty($actual);
+        $this->assertEquals($expect, $actual);
+    }
 
+    public function test_checkbox()
+    {
+        $expect = '<input name="gender" type="checkbox" value="1" />';
+        $actual = $this->form->checkbox('gender', 1);
+        $this->assertEquals($expect, $actual);
+    }
+
+    public function test_textarea() {
+        $expect = '<textarea class="form-control" name="name">CONG</textarea>';
+        $actual = $this->form->textarea("name", "CONG", 0, 0);
+        $this->assertEquals($expect, $actual);
+    }
+
+    public function test_reset()
+    {
+        $expect = '<button class="btn btn-sm btn-danger" type="reset"></button>';
+        $actual = $this->form->reset();
+        $this->assertEquals($expect, $actual);
+    }
+
+    public function test_submit()
+    {
+        $expect = '<button class="btn btn-sm btn-primary" type="submit"></button>';
+        $actual = $this->form->submit();
+        $this->assertEquals($expect, $actual);
+    }
+
+
+    public function test_editor()
+    {
+        $expect = '<textarea class="form-control you-editor" cols="100" name="editor" rows="50"></textarea>';
+        $actual = $this->form->editor('editor');
         $this->assertEquals($expect, $actual);
     }
 
@@ -85,125 +74,7 @@ class FormTest extends PHPUnit_Framework_TestCase
         return $str;
     }
 
-    public function test_select_group() {
-        $actual = '
-            <select id="money" class="form-control" name="money">
-                <optgroup label="Name">
-                    <option value="justin">Justin</option>
-                </optgroup>
-                <optgroup label="Age">
-                    <option value="18">18</option>
-                </optgroup>
-            </select>
-        ';
 
-        $expect = $this->form->selectGroup('money',
-                                           null,
-                                           [
-                                                'Name' => ['justin' => 'Justin'],
-                                                'Age'  => ['18' => 18]
-                                           ],
-                                           ['id' => 'money', 'class' => 'form-control']);
-
-        $actual = $this->replaceDirty($actual);
-        $expect = $this->replaceDirty($expect);
-
-        $this->assertEquals($expect, $actual);
-    }
-
-    public function test_select_group_selected() {
-        $actual = '
-            <select id="money" class="form-control" name="money">
-                <optgroup label="Name">
-                    <option value="justin">Justin</option>
-                </optgroup>
-                <optgroup label="Age">
-                    <option value="18" selected="selected">18</option>
-                </optgroup>
-            </select>
-        ';
-
-        $expect = $this->form->selectGroup('money',
-                                           18,
-                                           [
-                                                'Name' => ['justin' => 'Justin'],
-                                                'Age'  => ['18' => 18]
-                                           ],
-                                           ['id' => 'money', 'class' => 'form-control']);
-
-        $actual = $this->replaceDirty($actual);
-        $expect = $this->replaceDirty($expect);
-
-        $this->assertEquals($expect, $actual);
-    }
-
-    public function test_reset() {
-        $actual = '<button class="form-control" id="shit" type="reset">Reset</button>';
-        $expect = $this->form->reset('Reset', ['class' => 'form-control', 'id' => 'shit']);
-
-        $actual = $this->replaceDirty($actual);
-        $expect = $this->replaceDirty($expect);
-
-        $this->assertEquals($expect, $actual);
-    }
-
-    public function test_submit() {
-        $actual = '<button class="form-control" id="shit" type="submit">Submit</button>';
-        $expect = $this->form->submit('Submit', ['class' => 'form-control', 'id' => 'shit']);
-
-        $actual = $this->replaceDirty($actual);
-        $expect = $this->replaceDirty($expect);
-
-        $this->assertEquals($expect, $actual);
-    }
-
-    public function test_button() {
-        $actual = '<button class="form-control" id="shit" type="button">Button</button>';
-        $expect = $this->form->button('Button', ['class' => 'form-control', 'id' => 'shit']);
-
-        $actual = $this->replaceDirty($actual);
-        $expect = $this->replaceDirty($expect);
-
-        $this->assertEquals($expect, $actual);
-    }
-
-    public function test_error() {
-        $actual = '<span class="help-inline text-danger">Error</span>';
-    }
-
-    public function test_label() {
-
-        $actual = $this->form->label('Name');
-        $expect = '<label class="control-label col-sm-3">Name</label>';
-
-        $actual = $this->replaceDirty($actual);
-        $expect = $this->replaceDirty($expect);
-
-        $this->assertEquals($expect, $actual);
-    }
-
-    public function test_control() {
-        $actual = '
-            <div class="form-group">
-                <label class="control-label col-sm-3">Name</label>
-                <div class="col-sm-6">
-                    <input type="text" name="name" value="" class="form-control">
-                    <span class="help-inline text-danger">Vui long nhap ten</span>
-                </div>
-            </div>
-        ';
-
-        $expect = $this->form->control(
-            $this->form->label('Name'),
-            $this->form->text('name'),
-            alertError('name')
-        );
-
-        $actual = $this->replaceDirty($actual);
-        $expect = $this->replaceDirty($expect);
-
-        $this->assertEquals($expect, $actual);
-    }
 
 
 }
