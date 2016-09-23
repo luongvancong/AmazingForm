@@ -1,5 +1,5 @@
 {
-    "name": "justin/Form",
+    "name": "justin/form",
     "description": "Form bootstrap",
     "license": "MIT",
     "keywords": ["form", "form builder"],
@@ -18,6 +18,9 @@
     "autoload": {
         "psr-4": {
             "Justin\\Form\\": "src"
-        }
+        },
+        "files": [
+            "src/helper.php"
+        ]
     }
 }
